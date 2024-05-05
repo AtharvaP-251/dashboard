@@ -3,7 +3,11 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 
-export default function Tags({ options, label, width }) {
+export default function Tags({ options, label, width, onChange }) {
+    const handleChange = (event, options) => {
+        onChange(options.map((option) => option.value));
+    };
+
     return (
         <Stack spacing={3} sx={{ minWidth: width, width: "auto" }}>
             <Autocomplete
@@ -15,6 +19,7 @@ export default function Tags({ options, label, width }) {
                 renderInput={(params) => (
                     <TextField {...params} label={label} />
                 )}
+                onChange={handleChange}
             />
         </Stack>
     );
