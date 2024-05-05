@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import BasicCard from "./components/BasicCard";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [jobData, setJobData] = useState(null);
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch(
+                "https://api.weekday.technology/adhoc/getSampleJdJSON",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ limit: 10, offset: 0 }),
+                }
+            );
+
+            const data = await response.json();
+            setJobData(data.jdList[0]);
+        } catch (error) {
+            console.error("Error fetching job data:", error);
+        }
+    };
+
+    return (
+        <div className="App">{jobData && <BasicCard jobData={jobData} />}</div>
+    );
 }
 
 export default App;
