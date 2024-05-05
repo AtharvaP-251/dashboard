@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import BasicCard from "./BasicCard";
+import BasicCard from "../BasicCard";
 import { CircularProgress } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { fetchData } from "../../apis/fetchData";
+import { DEFAULT_LIMIT } from "../../utils/constants";
+import "./styles.css";
 
 const JobList = () => {
     const [initialRender, setInitialRender] = useState(true);
@@ -14,30 +17,16 @@ const JobList = () => {
         if (initialRender) {
             setInitialRender(false);
         } else {
-            fetchData();
+            fetchDataAndUpdateList();
         }
     }, [initialRender]);
 
-    const fetchData = async () => {
+    const fetchDataAndUpdateList = async () => {
         try {
-            const response = await fetch(
-                `https://api.weekday.technology/adhoc/getSampleJdJSON`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        limit: 10,
-                        offset: pageOffset.current,
-                    }),
-                }
-            );
-
-            const data = await response.json();
+            const data = await fetchData(pageOffset.current);
             setJobDataList((prevData) => [...prevData, ...data.jdList]);
             setTotalCount(data.totalCount);
-            pageOffset.current += 10;
+            pageOffset.current += DEFAULT_LIMIT;
         } catch (error) {
             console.error("Error fetching job data:", error);
         }
@@ -46,7 +35,7 @@ const JobList = () => {
     const handleOnRowsScrollEnd = () => {
         if (jobDataList.length < totalCount) {
             setHasMoreValue(true);
-            fetchData();
+            fetchDataAndUpdateList();
         } else {
             setHasMoreValue(false);
         }
@@ -62,15 +51,7 @@ const JobList = () => {
                 loader={<CircularProgress />}
                 style={{ overflow: "unset" }}
             >
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                            "repeat(auto-fill, minmax(400px, 1fr))",
-                        gap: "20px",
-                        justifyContent: "space-around",
-                    }}
-                >
+                <div className="job-data-container">
                     {jobDataList.map((jobData) => (
                         <BasicCard key={`${jobData.jdUid}`} jobData={jobData} />
                     ))}
