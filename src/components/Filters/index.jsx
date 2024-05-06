@@ -15,6 +15,7 @@ import {
     FILTER_BOX_WIDTH,
     SEARCH_BOX_WIDTH,
 } from "../../utils/constants";
+import { filterJobData } from "../../utils/filterUtils";
 
 const Filters = ({
     jobDataList,
@@ -32,15 +33,7 @@ const Filters = ({
 
     const [prevFilteredData, setPrevFilteredData] = useState([]);
     const filterData = (filters) => {
-        const filteredData = jobDataList.filter((job) => {
-            const companyNameFilter =
-                !filters.companyName ||
-                job.companyName
-                    .toLowerCase()
-                    .includes(filters.companyName.toLowerCase());
-
-            return companyNameFilter;
-        });
+        const filteredData = filterJobData(jobDataList, filters);
         setPrevFilteredData(filteredData);
         if (
             filteredData.length <= DEFAULT_LIMIT ||
