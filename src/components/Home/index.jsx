@@ -7,6 +7,7 @@ import { DEFAULT_LIMIT } from "../../utils/constants";
 const Home = () => {
     const [initialRender, setInitialRender] = useState(true);
     const [jobDataList, setJobDataList] = useState([]);
+    const [filteredJobDataList, setFilteredJobDataList] = useState([]);
     const [hasMoreValue, setHasMoreValue] = useState(true);
     const [totalCount, setTotalCount] = useState();
     const pageOffset = useRef(0);
@@ -42,14 +43,18 @@ const Home = () => {
     return (
         <>
             {jobDataList && (
-                <div>
-                    <Filters />
-                    <JobsContainer
-                        jobDataList={jobDataList}
-                        hasMoreValue={hasMoreValue}
-                        handleOnRowsScrollEnd={handleOnRowsScrollEnd}
-                    />
-                </div>
+                <Filters
+                    jobDataList={jobDataList}
+                    setFilteredJobDataList={setFilteredJobDataList}
+                    handleOnRowsScrollEnd={handleOnRowsScrollEnd}
+                />
+            )}
+            {filteredJobDataList && (
+                <JobsContainer
+                    filteredJobDataList={filteredJobDataList}
+                    hasMoreValue={hasMoreValue}
+                    handleOnRowsScrollEnd={handleOnRowsScrollEnd}
+                />
             )}
         </>
     );

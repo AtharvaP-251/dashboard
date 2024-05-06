@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ComboBox from "../ComboBox";
 import Tags from "../Tags";
 import BasicTextField from "../BasicTextField";
@@ -10,9 +10,17 @@ import {
     roleOptions,
 } from "../../utils/dropdownOptions";
 import "./styles.css";
-import { FILTER_BOX_WIDTH, SEARCH_BOX_WIDTH } from "../../utils/constants";
+import {
+    DEFAULT_LIMIT,
+    FILTER_BOX_WIDTH,
+    SEARCH_BOX_WIDTH,
+} from "../../utils/constants";
 
-const Filters = () => {
+const Filters = ({
+    jobDataList,
+    setFilteredJobDataList,
+    handleOnRowsScrollEnd,
+}) => {
     const [filters, setFilters] = useState({
         roles: [],
         minExperience: null,
@@ -22,12 +30,38 @@ const Filters = () => {
         companyName: null,
     });
 
-    const handleFilterChange = (filterKey, value) => {
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            [filterKey]: value,
-        }));
+    const [prevFilteredData, setPrevFilteredData] = useState([]);
+    const filterData = (filters) => {
+        const filteredData = jobDataList.filter((job) => {
+            const companyNameFilter =
+                !filters.companyName ||
+                job.companyName
+                    .toLowerCase()
+                    .includes(filters.companyName.toLowerCase());
+
+            return companyNameFilter;
+        });
+        setPrevFilteredData(filteredData);
+        if (
+            filteredData.length <= DEFAULT_LIMIT ||
+            filteredData.length === prevFilteredData.length
+        )
+            handleOnRowsScrollEnd();
+        setFilteredJobDataList(filteredData);
     };
+
+    const handleFilterChange = (filterKey, value) => {
+        const newFilters = {
+            ...filters,
+            [filterKey]: value,
+        };
+        setFilters(newFilters);
+        filterData(newFilters);
+    };
+
+    useEffect(() => {
+        filterData(filters);
+    }, [jobDataList]);
 
     return (
         <div className="filters">

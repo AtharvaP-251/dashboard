@@ -1,14 +1,28 @@
-import React from "react";
 import { CircularProgress } from "@mui/material";
 import InfiniteScroll from "react-infinite-scroll-component";
 import BasicCard from "../BasicCard";
 import "./styles.css";
+import { useEffect, useState } from "react";
 
 const JobsContainer = ({
-    jobDataList,
+    filteredJobDataList,
     hasMoreValue,
     handleOnRowsScrollEnd,
 }) => {
+    const [jobDataList, setJobDataList] = useState([]);
+
+    useEffect(() => {
+        const uniqueJdUids = new Set();
+        const uniqueJobDataList = filteredJobDataList.filter((item) => {
+            if (!uniqueJdUids.has(item.jdUid)) {
+                uniqueJdUids.add(item.jdUid);
+                return true;
+            }
+            return false;
+        });
+        setJobDataList(uniqueJobDataList);
+    }, [filteredJobDataList]);
+
     return (
         <InfiniteScroll
             dataLength={jobDataList.length}
