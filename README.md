@@ -1,6 +1,7 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with React, JavaScript and Material UI [Create React App](https://github.com/facebook/create-react-app).
+Web App Link : https://job-search-dashborad-f8d380.netlify.app/
 
 ## Available Scripts
 
